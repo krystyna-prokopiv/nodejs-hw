@@ -10,5 +10,6 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   const isProd = process.env.NODE_ENV === 'production';
-  res.status(500).json(isProd ? 'Something went wrong.' : err.message);
+  const message = isProd ? 'Something went wrong.' : err.message;
+  res.status(500).json({message});
 };
