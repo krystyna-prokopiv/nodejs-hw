@@ -17,7 +17,7 @@ export const registerUser = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  const session = createSession(newUser._id);
+  const session = await createSession(newUser._id);
   setSessionCookies(res, session);
 
   res.status(201).json(newUser);
@@ -53,11 +53,16 @@ export const refreshUserSession = async (req, res) => {
     throw createHttpError(401, 'Session not found');
   }
   if (session.refreshTokenValidUntil < Date.now()) {
+    await Session.deleteOne({ _id: sessionId });
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.clearCookie('sessionId');
     throw createHttpError(401, 'Session token expired');
   }
 
   await Session.deleteOne({ _id: sessionId });
   const newSession = await createSession(session.userId);
+
   setSessionCookies(res, newSession);
 
   res.status(200).json({ message: 'Session refreshed' });
@@ -65,7 +70,7 @@ export const refreshUserSession = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   const { sessionId } = req.cookies;
-  const session = await Session.findById({ _id: sessionId });
+  const session = await Session.findById(sessionId);
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
