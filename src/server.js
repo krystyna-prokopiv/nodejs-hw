@@ -10,6 +10,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import authRouter from './routes/authRoutes.js';
+import userRouter from './routes/userRoutes.js';
 
 await connectMongoDB();
 
@@ -21,6 +22,7 @@ app.use(logger);
 
 app.use(authRouter);
 app.use(notesRouter);
+app.use(userRouter);
 
 app.use(notFoundHandler);
 app.use(errors());
