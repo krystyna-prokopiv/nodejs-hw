@@ -75,11 +75,11 @@ export const refreshUserSession = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   const { sessionId } = req.cookies;
-  const session = await Session.findById(sessionId);
-  if (!session) {
-    throw createHttpError(401, 'Session not found');
+
+  if (sessionId) {
+    await Session.deleteOne({ _id: sessionId });
   }
-  await Session.deleteOne({ _id: sessionId });
+
   res.clearCookie('accessToken');
   res.clearCookie('refreshToken');
   res.clearCookie('sessionId');
