@@ -9,12 +9,12 @@ cloudinary.config({
   api_secret: CLOUDINARY_API_SECRET,
 });
 
-export async function saveFileToCloudinary(buffer, userId) {
+export function saveFileToCloudinary(buffer, userId) {
   const options = {
     folder: 'users-app/avatars',
-    public_id: `avatar${userId}`,
-    resousre_type: 'image',
-    owerwrite: true,
+    public_id: `avatar ${userId}`,
+    resource_type: 'image',
+    overwrite: true,
     unique_filename: false,
     transformation: [
       { width: 500, height: 500, crop: 'fill', gravity: 'auto' },
@@ -23,7 +23,7 @@ export async function saveFileToCloudinary(buffer, userId) {
   };
 
   return new Promise((resolve, reject) => {
-    const uploadStreem = cloudinary.uploader.upload_streem(
+    const uploadStream = cloudinary.uploader.upload_stream(
       options,
       (error, result) => {
         if (error) {
@@ -32,6 +32,6 @@ export async function saveFileToCloudinary(buffer, userId) {
         resolve(result);
       },
     );
-    uploadStreem.end(buffer);
+    uploadStream.end(buffer);
   });
 }
